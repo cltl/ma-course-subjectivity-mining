@@ -1,9 +1,9 @@
-Offenseval code for NB/SVM
+Code for NB/SVM
 ===========================
 
-The Offenseval code is organized in four folders
+The  code is organized in four folders
 
-- tasks: contains classes to extract data related to specific tasks. You can use the model of 'vua_format' to extract data from other tasks/data sets
+- tasks: contains classes to extract data related to specific tasks. You can use the model of 'vua-format' to extract data from other tasks/data sets
 - ml_pipeline: code for ML pipeline
     * preprocessing: tokenize, lowercase, etc.
     * representation: format data for input to classifiers. Currently allows for count vectors and word embeddings
@@ -78,8 +78,8 @@ Call the 'ml_pipeline' module to run experiments:
    * ```pynlp$ python -m ml_pipeline```  
    * from PyCharm: edit a run configuration, setting the working directory to 'pynlp'
    * the main function takes three arguments:
-       * a task name (default is 'offenseval') specifying data file names
-       * the path to the data (default is 'data')
+       * a task name (default is 'vua_format') specifying data file names
+       * the path to the data (default is 'data/test')
        * a pipeline (default is 'naive_bayes')   
 
 Authors 
