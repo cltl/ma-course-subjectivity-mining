@@ -61,7 +61,7 @@ Usage
    * ```pynlp$ python -m ml_pipeline```  
    * from PyCharm: edit a run configuration, setting the working directory to 'pynlp'
    * the main function takes three arguments:
-       * a task name (default is 'vua-format') specifying data file names
+       * a task name (default is 'vua_format') specifying data file names
        * the path to the data (default is 'data/test')
        * a pipeline (default is 'naive_bayes')   
 
