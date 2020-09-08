@@ -43,7 +43,7 @@ def run(task_name, data_dir, pipeline_name):
 def task(name):
     if name == 'offenseval':
         return of.Offenseval()
-    elif name == 'vua-format':
+    elif name == 'vua_format':
         return vf.VuaFormat()
     else:
         raise ValueError("task name is unknown. You can add a custom task in 'tasks'")
