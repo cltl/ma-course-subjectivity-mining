@@ -5,7 +5,8 @@ from ml_pipeline import preprocessing
 from ml_pipeline import representation
 from ml_pipeline import pipelines
 
-
+# You will need to have the right data in place for these tests to run,
+# as well as the spacy model 'en_core_web_sm'
 offenseval_data_dir = 'data/'
 trac_data_dir = 'resources/TRAC2018/VUA_format/'
 hate_speech_data_dir = 'resources/hate-speech-dataset-vicom/VUA_format/'
@@ -48,6 +49,7 @@ def test_preprocessors():
     assert len(train_X_prep) == len(train_X)
     assert isinstance(train_X_prep[0], str)
 
+    # this will call the spacy model 'en_core_web_sm'
     prep = preprocessing.Preprocessor(tokenize=True, normalize_tweet=True, lowercase=True, lemmatize=True)
     train_X_prep = prep.transform(train_X)
     assert len(train_X_prep) == len(train_X)

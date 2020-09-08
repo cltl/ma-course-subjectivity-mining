@@ -19,44 +19,61 @@ Environment
 ------------
 You can create a Python (3) environment (for instance 'myenv') with pip or conda, and load required packages as follows.
 
-With venv and pip
-"""""""""""""""""
- 
+With venv and pip:
+
 ```
    $ python -m venv myenv
    $ source activate myenv
 ```
 
-With conda
-"""""""""""""""""
+With conda:
 
 ```
-   $ conda create --name myenv python=3.6
+   $ conda create --name myenv python=3.7
    $ conda activate myenv
 ```
 
-Requirements
+Dependencies
 -------------
 Install the following libraries, as well as the spacy model 'en_core_web_sm':
 
 ```
-   $ pip install Keras scikit-learn spacy nltk
+   $ pip install Keras tensorflow gensim scikit-learn spacy nltk numpy pandas pytest
    $ python -m spacy download en_core_web_sm
 ```
+Even if you use conda to create your environment, it is recommended to install Keras with `pip`.
+
+Data
+----
+The following data should be stored under a `data` folder under the project root `pynlp/`:
+
+* Offenseval data: `offenseval-training-v1.tsv` and `offenseval-trial.txt`
+* Word embeddings. The code currently runs with Glove twitter embeddings (`data/glove.twitter.27B.100d.vec`) or wiki-news embeddings (`data/wiki-news-300d-1M.vec`). You can also modify the code `pynlp/ml_pipeline/representation.py` to use with other embeddings.
+
+To run some of the tests, you should also have the following files:
+
+* `resources/TRAC2018/VUA_format/devData.csv` and `.../trainData.csv`
+* `resources/hate-speech-dataset-vicom/VUA_format/testData.csv` and `.../trainData.csv`
 
 Usage
 =======
+Test suite
+-----------
+You can use pytest to run the test suite, from the command line or from Pycharm.
 
-* Make sure that you load or link data files to a `data/` folder under `pynlp/`. 
+* from the command line (under 'pynlp'): call 'pytest'; this will run all test suites under 'tests'
+* from PyCharm: create a pytest configuration to run `test_suite.py`. Use the absolute path to 'pynlp' as working directory.
 
-   * This includes word embeddings. The code currently runs with Glove twitter embeddings (`data/glove.twitter.27B.100d.vec`) or wiki-news embeddings (`data/wiki-news-300d-1M.vec`). You can also modify the code `pynlp/ml_pipeline/representation.py` to use with other embeddings.
+Follow these steps if you have difficulties creating a pytest configuration:
 
-* You can use pytest to run the test suite
+1. set pytest as the default test runner in Pycharm: `Preferences (CMD+,) > Tools > Python Integrated Tools` (see also the [Pycharm documentation](https://www.jetbrains.com/help/pycharm/pytest.html))
+2. create a test run configuration: in the Pycharm menu, select `Run > Edit configurations`, then click on the `+` to add a new `Python tests / pytest` configuration. Enter a module name (`test_suite`) or a script path in the `target` field. The working directory for tests should point to `pynlp`.
 
-   * from PyCharm: edit a pytest configuration to run `py.test under test_suite.py`. Use the absolute path to 'pynlp' as working directory.
-   * from the command line (under 'pynlp'): call 'pytest'; this will run all test suites under 'tests'
+Note also that the tests will not run out of the box, as they depend on data files being present.
 
-* Call the 'ml_pipeline' module to run experiments:
+Running experiments
+--------------------
+Call the 'ml_pipeline' module to run experiments:
 
    * ```pynlp$ python -m ml_pipeline```  
    * from PyCharm: edit a run configuration, setting the working directory to 'pynlp'
