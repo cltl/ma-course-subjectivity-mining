@@ -1,4 +1,4 @@
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, FeatureUnion
 from ml_pipeline import preprocessing, representation
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import svm
@@ -7,6 +7,14 @@ from sklearn import svm
 def pipeline(preprocessor, representation, classifier):
     return Pipeline([('prep', preprocessor),
                      ('frm', representation),
+                     ('clf', classifier)])
+
+
+def combined_pipeline(prep1, repr1, prep2, repr2, classifier):
+    combined_features = FeatureUnion([
+        ('token_features', Pipeline([('prep1', prep1), ('repr1', repr1)])),
+        ('polarity_features', Pipeline([('prep2', prep2), ('repr2', repr2)]))])
+    return Pipeline([('features', combined_features),
                      ('clf', classifier)])
 
 
@@ -49,3 +57,10 @@ def svm_libsvc_embed():
 def svm_sigmoid_embed():
     return pipeline(preprocessing.std_prep(), representation.text2embeddings('glove'), svm.SVC(kernel='sigmoid',
                                                                                         gamma='scale'))
+
+
+def naive_bayes_counts_lex():
+    return combined_pipeline(preprocessing.std_prep(), representation.count_vectorizer({'min_df': 1}),
+                             preprocessing.lex_prep(), representation.count_vectorizer({'min_df': 1}),
+                             MultinomialNB())
+

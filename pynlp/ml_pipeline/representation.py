@@ -5,6 +5,8 @@ import numpy as np
 from gensim.scripts.glove2word2vec import glove2word2vec
 from pathlib import Path
 
+from sklearn.pipeline import FeatureUnion
+
 
 class Text2Embedding(TransformerMixin):
 

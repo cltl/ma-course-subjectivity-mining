@@ -1,15 +1,15 @@
 import logging
 import sys
 
-from tasks import offenseval as of
 from tasks import vua_format as vf
 from ml_pipeline import utils, cnn, preprocessing
 from ml_pipeline import pipelines
-from ml_pipeline.cnn import CNN
+from ml_pipeline.cnn import CNN, evaluate
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stdout)
+#handler = logging.FileHandler('experiment.log')
 formatter = logging.Formatter('%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -20,8 +20,9 @@ def run(task_name, data_dir, pipeline_name):
     tsk = task(task_name)
     logger.info('>> Loading data...')
     tsk.load(data_dir)
-    logger.info('>> retrieving train/test instances...')
+    logger.info('>> retrieving train/data instances...')
     train_X, train_y, test_X, test_y = utils.get_instances(tsk, split_train_dev=False)
+    test_X_ref = test_X
 
     if pipeline_name.startswith('cnn'):
         pipe = cnn(pipeline_name)
@@ -35,15 +36,16 @@ def run(task_name, data_dir, pipeline_name):
 
     logger.info('>> testing...')
     sys_y = pipe.predict(test_X)
-    logger.info(utils.print_prediction(test_X, test_y, sys_y))
+
     logger.info('>> evaluation...')
     logger.info(utils.eval(test_y, sys_y))
 
+    logger.info('>> predictions')
+    utils.print_all_predictions(test_X_ref, test_y, sys_y, logger)
+
 
 def task(name):
-    if name == 'offenseval':
-        return of.Offenseval()
-    elif name == 'vua_format':
+    if name == 'vua_format':
         return vf.VuaFormat()
     else:
         raise ValueError("task name is unknown. You can add a custom task in 'tasks'")
@@ -63,8 +65,12 @@ def pipeline(name):
         return pipelines.naive_bayes_counts()
     elif name == 'naive_bayes_tfidf':
         return pipelines.naive_bayes_tfidf()
+    elif name == 'naive_bayes_counts_lex':
+        return pipelines.naive_bayes_counts_lex()
     elif name == 'svm_libsvc_counts':
         return pipelines.svm_libsvc_counts()
+    elif name == 'naive_bayes_counts_lex':
+        return pipelines.naive_bayes_counts_lex()
     elif name == 'svm_libsvc_tfidf':
         return pipelines.svm_libsvc_tfidf()
     elif name == 'svm_libsvc_embed':

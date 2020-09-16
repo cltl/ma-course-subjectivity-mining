@@ -13,17 +13,18 @@ from keras.layers import Embedding
 from keras.layers import Conv1D, GlobalMaxPooling1D
 from ml_pipeline import utils
 from tasks import offenseval as of
+import pandas as pd
 import tensorflow  # backend used by keras
 
 # set parameters:
 max_features = 5000
-maxlen = 400
+maxlen = 40
 batch_size = 32
 embedding_dims = 50
 filters = 250
 kernel_size = 3
 hidden_dims = 250
-epochs = 2
+epochs = 6
 
 
 class CNN:
@@ -42,7 +43,8 @@ class CNN:
         self.model = build_model(train_X, train_y)
 
     def predict(self, test_X):
-        return self.model.predict_classes(test_X, batch_size=128)
+        sys_y = (self.model.predict(test_X) > 0.5).astype('int32')
+        return sys_y
 
 
 def encode(train_X, train_y, test_X, test_y):
@@ -65,14 +67,14 @@ def encode(train_X, train_y, test_X, test_y):
     train_X = encoded_docs[:len(train_X)]
     test_X = encoded_docs[len(train_X):]
     print(len(train_X), 'train sequences')
-    print(len(test_X), 'test sequences')
+    print(len(test_X), 'data sequences')
 
     print('Pad sequences (samples x time)')
     train_X = sequence.pad_sequences(train_X, maxlen=maxlen)
     test_X = sequence.pad_sequences(test_X, maxlen=maxlen)
     print('train_X shape:', train_X.shape)
     print('test_X shape:', test_X.shape)
-    return train_X, train_y, test_X, test_y
+    return pd.DataFrame(train_X), pd.DataFrame(train_y), pd.DataFrame(test_X), pd.DataFrame(test_y)
 
 
 def encode_data(data_dir):
@@ -81,7 +83,7 @@ def encode_data(data_dir):
     task.load(data_dir=data_dir)
     train_X, train_y, test_X, test_y = utils.get_instances(task, split_train_dev=False)
     print(len(train_X), 'train sequences')
-    print(len(test_X), 'test sequences')
+    print(len(test_X), 'data sequences')
 
     train_X, train_y, test_X, test_y = encode(train_X, train_y, test_X, test_y)
 
@@ -130,7 +132,9 @@ def build_model(train_X, train_y):
 
 
 def evaluate(model, test_X, test_y):
-    sys_y = model.predict_classes(test_X, batch_size=128)
+    #sys_y = model.predict_classes(test_X, batch_size=128)
+    sys_y = (model.predict(test_X) > 0.5).astype('int32')
+    #sys_y = model.predict(test_X > 0.5).astype('int32')
     print(utils.eval(test_y, sys_y))
 
 

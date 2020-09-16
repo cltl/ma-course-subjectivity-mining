@@ -102,7 +102,27 @@ def load_keras_model(dir):
 
 # --------------reporting predictions per document --------------------
 
-def print_prediction(test_X,test_y,sys_y):
-   print("pred\t", "gold\t", "text")
-   for i in range(0,len(sys_y)):
-        print(sys_y[i],"\t",test_y[i],"\t",test_X[i])
+
+def print_all_predictions(test_X, test_y, sys_y, logger):
+    logger.info("--- Predictions ---\npred\tgold\ttweet")
+    for i in range(0, len(sys_y)):
+        to_print = "{}\t{}\t{}".format(sys_y[i], test_y.values[i], test_X[i])
+        logger.info(to_print)
+
+
+# -------------- polarity lexicons -------------------
+
+def hate_lexicon():
+    Dlex = {}
+    lex_name = "resources/hatebase_dict_vua_format.csv"
+    df1 = pd.read_csv(lex_name, sep=";")
+    #print("\ndataset:{}\tnr of rows:{}\tnr of columns:{}".format(lex_name, df1.shape[0], df1.shape[1]))
+
+    for i, row in df1.iterrows():
+        entry = df1.loc[i]['Entry']
+        pos = df1.loc[i]['Pos']
+        label = df1.loc[i]['Label']
+        Dlex[entry] = {}
+        Dlex[entry]["label"] = label
+        Dlex[entry]["pos"] = pos
+    return Dlex

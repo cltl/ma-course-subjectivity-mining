@@ -1,11 +1,12 @@
 from nltk import TweetTokenizer
 import spacy
+from sklearn.base import TransformerMixin
+
+from ml_pipeline.utils import hate_lexicon
 
 
 class Preprocessor:
-    """preprocesses the data with NLTK and Spacy (lemmatizer)
-    
-    TODO remove stopwords"""
+    """preprocesses the data with NLTK and Spacy (lemmatizer)"""
     def __init__(self, tokenize, normalize_tweet, lowercase, lemmatize, lexicon={}):
         tt_args = {}
         tt_args['reduce_len'] = normalize_tweet
@@ -51,10 +52,10 @@ def identify_in_lexicon(lexicon):
         processed = []
         for tw in data:
             processed_tweet = []
-            for token in tw:
+            for token in tw.split():
                 lex_id = 'neutral'
                 if token in lexicon:
-                    lex_id = lexicon[token]
+                    lex_id = lexicon[token]['label']
                 processed_tweet.append(lex_id)
             processed.append(' '.join(t for t in processed_tweet))
         return processed
@@ -66,3 +67,7 @@ def identify_in_lexicon(lexicon):
 
 def std_prep():
     return Preprocessor(tokenize=True, normalize_tweet=True, lowercase=True, lemmatize=False)
+
+
+def lex_prep():
+    return Preprocessor(tokenize=True, normalize_tweet=True, lowercase=True, lemmatize=False, lexicon=hate_lexicon())
