@@ -12,7 +12,6 @@ from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
 from keras.layers import Conv1D, GlobalMaxPooling1D
 from ml_pipeline import utils
-from tasks import offenseval as of
 import pandas as pd
 import tensorflow  # backend used by keras
 

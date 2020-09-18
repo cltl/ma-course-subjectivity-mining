@@ -104,7 +104,7 @@ def load_keras_model(dir):
 
 
 def print_all_predictions(test_X, test_y, sys_y, logger):
-    logger.info("--- Predictions ---\npred\tgold\ttweet")
+    logger.info("\npred\tgold\ttweet\n----\t----\t----")
     for i in range(0, len(sys_y)):
         to_print = "{}\t{}\t{}".format(sys_y[i], test_y.values[i], test_X[i])
         logger.info(to_print)

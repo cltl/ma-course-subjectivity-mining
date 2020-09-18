@@ -35,7 +35,7 @@ def test_preprocessing():
 
     preprocessor = preprocessing.lex_prep()
     X = preprocessor.fit_transform(train_X)
-    assert X[0] == "neutral hate neutral neutral neutral neutral neutral neutral"
+    assert X[0] == "NEUTRAL HATE NEUTRAL NEUTRAL NEUTRAL NEUTRAL NEUTRAL NEUTRAL"
 
 
 def test_count_vectorizer():
@@ -68,6 +68,11 @@ def test_combined_features():
     actual = X.toarray()
     expected = np.array([[1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 7], [0, 0, 0, 0, 1, 0, 1, 1, 0, 2, 0, 1, 0, 7]], np.int64)
     assert (actual == expected).all()
+
+    tokens_from_lexicon = combined_features.transformer_list[1][1].steps[0][1].tokens_from_lexicon
+    assert tokens_from_lexicon == 1
+
+
 
 
 def test_full_pipelines():

@@ -2,7 +2,7 @@ import logging
 import sys
 
 from tasks import vua_format as vf
-from ml_pipeline import utils, cnn, preprocessing
+from ml_pipeline import utils, cnn, preprocessing, pipeline_with_lexicon
 from ml_pipeline import pipelines
 from ml_pipeline.cnn import CNN, evaluate
 
@@ -15,7 +15,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def run(task_name, data_dir, pipeline_name):
+def run(task_name, data_dir, pipeline_name, print_predictions):
     logger.info('>> Running {} experiment'.format(task_name))
     tsk = task(task_name)
     logger.info('>> Loading data...')
@@ -33,6 +33,8 @@ def run(task_name, data_dir, pipeline_name):
   
     logger.info('>> training pipeline ' + pipeline_name)
     pipe.fit(train_X, train_y)
+    if pipeline_name == 'naive_bayes_counts_lex':
+        logger.info("   -- Found {} tokens in lexicon".format(pipe.tokens_from_lexicon))
 
     logger.info('>> testing...')
     sys_y = pipe.predict(test_X)
@@ -40,8 +42,9 @@ def run(task_name, data_dir, pipeline_name):
     logger.info('>> evaluation...')
     logger.info(utils.eval(test_y, sys_y))
 
-    logger.info('>> predictions')
-    utils.print_all_predictions(test_X_ref, test_y, sys_y, logger)
+    if print_predictions:
+        logger.info('>> predictions')
+        utils.print_all_predictions(test_X_ref, test_y, sys_y, logger)
 
 
 def task(name):
@@ -66,11 +69,9 @@ def pipeline(name):
     elif name == 'naive_bayes_tfidf':
         return pipelines.naive_bayes_tfidf()
     elif name == 'naive_bayes_counts_lex':
-        return pipelines.naive_bayes_counts_lex()
+        return pipeline_with_lexicon.naive_bayes_counts_lex()
     elif name == 'svm_libsvc_counts':
         return pipelines.svm_libsvc_counts()
-    elif name == 'naive_bayes_counts_lex':
-        return pipelines.naive_bayes_counts_lex()
     elif name == 'svm_libsvc_tfidf':
         return pipelines.svm_libsvc_tfidf()
     elif name == 'svm_libsvc_embed':

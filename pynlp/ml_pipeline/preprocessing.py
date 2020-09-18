@@ -5,7 +5,7 @@ from sklearn.base import TransformerMixin
 from ml_pipeline.utils import hate_lexicon
 
 
-class Preprocessor:
+class Preprocessor(TransformerMixin):
     """preprocesses the data with NLTK and Spacy (lemmatizer)"""
     def __init__(self, tokenize, normalize_tweet, lowercase, lemmatize, lexicon={}):
         tt_args = {}
@@ -13,12 +13,13 @@ class Preprocessor:
         tt_args['strip_handles'] = normalize_tweet
         tt_args['preserve_case'] = not lowercase
         self.processors = []
+        self.tokens_from_lexicon = 0
         if tokenize:
             self.processors.append(tokenize_with(tt_args))
         if lemmatize:
             self.processors.append(lemmatize_with_spacy)
         if lexicon:
-            self.processors.append(identify_in_lexicon(lexicon))
+            self.processors.append(self.identify_in_lexicon(lexicon))
 
     def transform(self, data):
         for p in self.processors:
@@ -27,6 +28,25 @@ class Preprocessor:
 
     def fit_transform(self, data, y=None):
         return self.transform(data)
+
+    def identify_in_lexicon(self, lexicon):
+        """replaces words in a tweet by a label from a lexicon (pos/neg); defaults to 'NEUTRAL'"""
+
+        def apply_lexicon(data):
+            self.tokens_from_lexicon = 0
+            processed = []
+            for tw in data:
+                processed_tweet = []
+                for token in tw.split():
+                    lex_id = 'neutral'
+                    if token in lexicon:
+                        lex_id = lexicon[token]['label']
+                        self.tokens_from_lexicon += 1
+                    processed_tweet.append(lex_id.upper())
+                processed.append(' '.join(t for t in processed_tweet))
+            return processed
+
+        return apply_lexicon
 
 
 def tokenize_with(kwargs):
@@ -43,24 +63,6 @@ def lemmatize_with_spacy(data):
     def apply_spacy(tw):
         return ' '.join([token.lemma_ for token in nlp(tw)])
     return [apply_spacy(tweet) for tweet in data]
-
-
-def identify_in_lexicon(lexicon):
-    """replaces words in a tweet by a label from a lexicon (pos/neg); defaults to 'neutral'"""
-
-    def apply_lexicon(data):
-        processed = []
-        for tw in data:
-            processed_tweet = []
-            for token in tw.split():
-                lex_id = 'neutral'
-                if token in lexicon:
-                    lex_id = lexicon[token]['label']
-                processed_tweet.append(lex_id)
-            processed.append(' '.join(t for t in processed_tweet))
-        return processed
-
-    return apply_lexicon
 
 
 # -------------- standard preprocessor --------------------------------

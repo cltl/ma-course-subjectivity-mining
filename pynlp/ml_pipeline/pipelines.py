@@ -59,8 +59,3 @@ def svm_sigmoid_embed():
                                                                                         gamma='scale'))
 
 
-def naive_bayes_counts_lex():
-    return combined_pipeline(preprocessing.std_prep(), representation.count_vectorizer({'min_df': 1}),
-                             preprocessing.lex_prep(), representation.count_vectorizer({'min_df': 1}),
-                             MultinomialNB())
-
