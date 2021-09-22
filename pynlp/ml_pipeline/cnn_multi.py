@@ -14,19 +14,21 @@ from keras.layers import Conv1D, GlobalMaxPooling1D
 from ml_pipeline import utils
 import pandas as pd
 import tensorflow  # backend used by keras
+import numpy as np
+
 
 # set parameters:
 max_features = 5000
 maxlen = 40
 batch_size = 32
-embedding_dims = 100#50
-filters = 500#250
-kernel_size = 18#3
-hidden_dims = 500#250
-epochs = 10
+embedding_dims = 100
+filters = 500
+kernel_size = 18
+hidden_dims = 500
+epochs = 12
 
 
-class CNN:
+class CNN_multi:
 
     def __init__(self, preprocessor=None):
         self.preprocessor = preprocessor
@@ -42,7 +44,9 @@ class CNN:
         self.model = build_model(train_X, train_y)
 
     def predict(self, test_X):
-        sys_y = (self.model.predict(test_X) > 0.5).astype('int32')
+        #sys_y = (self.model.predict(test_X) > 0.5).astype('int32')
+        sys_y = self.model.predict(test_X, batch_size=32)
+        sys_y = np.argmax(sys_y, axis=1)
         return sys_y
 
 
@@ -117,10 +121,10 @@ def build_model(train_X, train_y):
     model.add(Activation('relu'))
 
     # We project onto a single unit output layer, and squash it with a sigmoid:
-    model.add(Dense(1))
-    model.add(Activation('sigmoid'))
+    model.add(Dense(3))
+    model.add(Activation('softmax'))
 
-    model.compile(loss='binary_crossentropy',
+    model.compile(loss='sparse_categorical_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
 
@@ -131,9 +135,10 @@ def build_model(train_X, train_y):
     return model
 
 
-def evaluate(model, test_X, test_y):
-    #sys_y = model.predict_classes(test_X, batch_size=128)
-    sys_y = (model.predict(test_X) > 0.5).astype('int32')
+def evaluate_multi(model, test_X, test_y):
+    sys_y = model.predict(test_X, batch_size=32)
+    sys_y = np.argmax(sys_y, axis=1)
+    #sys_y = (model.predict(test_X) > 0.5).astype('int32')
     #sys_y = model.predict(test_X > 0.5).astype('int32')
     print(utils.eval(test_y, sys_y))
 

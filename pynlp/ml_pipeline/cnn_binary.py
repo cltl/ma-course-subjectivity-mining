@@ -19,10 +19,10 @@ import tensorflow  # backend used by keras
 max_features = 5000
 maxlen = 40
 batch_size = 32
-embedding_dims = 100#50
-filters = 500#250
-kernel_size = 18#3
-hidden_dims = 500#250
+embedding_dims = 50
+filters = 250
+kernel_size = 3
+hidden_dims = 250
 epochs = 10
 
 
@@ -91,7 +91,6 @@ def encode_data(data_dir):
 
 def build_model(train_X, train_y):
     print('Build model...')
-    tensorflow.keras.backend.clear_session()
     model = Sequential()
 
     # we start off with an efficient embedding layer which maps

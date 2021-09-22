@@ -5,6 +5,8 @@ from tasks import vua_format as vf
 from ml_pipeline import utils, cnn, preprocessing, pipeline_with_lexicon
 from ml_pipeline import pipelines
 from ml_pipeline.cnn import CNN, evaluate
+from ml_pipeline.cnn_multi import CNN_multi, evaluate_multi
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -59,6 +61,10 @@ def cnn(name):
         return CNN()
     elif name == 'cnn_prep':
         return CNN(preprocessing.std_prep())
+    elif name == 'cnn_multi_raw':
+        return CNN_multi()
+    elif name == 'cnn_multi_prep':
+        return CNN_multi(preprocessing.std_prep())
     else:
         raise ValueError("pipeline name is unknown.")
 
