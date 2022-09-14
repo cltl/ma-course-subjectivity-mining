@@ -6,6 +6,7 @@ from ml_pipeline import utils
 from ml_pipeline import preprocessing
 from ml_pipeline import representation
 from ml_pipeline import pipelines
+from ml_pipeline.pipeline_with_lexicon import naive_bayes_counts_lex
 import numpy as np
 
 test_data_dir = 'tests/data/'
@@ -42,7 +43,7 @@ def test_count_vectorizer():
     train_X, train_y, test_X, test_y = train_test_data()
     cv = representation.count_vectorizer()
     X = cv.fit_transform(train_X)
-    assert cv.get_feature_names() == ['all', 'an', 'ass', 'deserve', 'hope', 'kicking', 'later', 'talk', 'they', 'to', 'twats', 'you']
+    assert (cv.get_feature_names_out() == ['all', 'an', 'ass', 'deserve', 'hope', 'kicking', 'later', 'talk', 'they', 'to', 'twats', 'you']).all()
     result = X.toarray()
     expected = np.array([[1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0], [0, 0, 0, 0, 1, 0, 1, 1, 0, 2, 0, 1]], np.int64)
     assert (result == expected).all()
@@ -77,7 +78,7 @@ def test_combined_features():
 
 def test_full_pipelines():
     train_X, train_y, test_X, test_y = train_test_data()
-    pipes = [pipelines.naive_bayes_counts, pipelines.svm_libsvc_embed(), pipelines.naive_bayes_counts_lex()]
+    pipes = [pipelines.naive_bayes_counts, pipelines.svm_libsvc_embed(), naive_bayes_counts_lex()]
 
     for pipe in pipes:
         pipe = pipelines.naive_bayes_counts()

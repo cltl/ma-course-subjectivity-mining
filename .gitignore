@@ -9,3 +9,5 @@ notebooks
 KEY*.ipynb
 data
 models
+venv/
+.vscode/

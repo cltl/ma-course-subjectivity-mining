@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import pickle
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics.classification import classification_report
-from keras.models import load_model
+from sklearn.metrics import classification_report
+from tensorflow.keras.models import load_model
 
 
 # ----------- data extraction and splitting ----------------------

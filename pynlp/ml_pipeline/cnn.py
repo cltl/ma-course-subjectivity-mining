@@ -5,15 +5,14 @@ https://github.com/keras-team/keras/blob/master/examples/imdb_cnn.py
 '''
 from __future__ import print_function
 
-from keras.preprocessing import sequence
-from keras.preprocessing.text import one_hot
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation
-from keras.layers import Embedding
-from keras.layers import Conv1D, GlobalMaxPooling1D
+from tensorflow.keras.preprocessing.text import one_hot
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Activation
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras.layers import Conv1D, GlobalMaxPooling1D
+import tensorflow.keras.utils as keras_utils
 from ml_pipeline import utils
 import pandas as pd
-import tensorflow  # backend used by keras
 
 # set parameters:
 max_features = 5000
@@ -69,8 +68,8 @@ def encode(train_X, train_y, test_X, test_y):
     print(len(test_X), 'data sequences')
 
     print('Pad sequences (samples x time)')
-    train_X = sequence.pad_sequences(train_X, maxlen=maxlen)
-    test_X = sequence.pad_sequences(test_X, maxlen=maxlen)
+    train_X = keras_utils.pad_sequences(train_X, maxlen=maxlen)
+    test_X = keras_utils.pad_sequences(test_X, maxlen=maxlen)
     print('train_X shape:', train_X.shape)
     print('test_X shape:', test_X.shape)
     return pd.DataFrame(train_X), pd.DataFrame(train_y), pd.DataFrame(test_X), pd.DataFrame(test_y)
