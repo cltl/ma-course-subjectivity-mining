@@ -62,8 +62,8 @@ def grid_search(pipeline, parameters, train_X, train_y, test_X):
 
 # ----------- evaluation --------------------------
 
-def eval(test_y, sys_y):
-    return classification_report(test_y, sys_y)
+def eval(test_y, sys_y, output_dict=False):
+    return classification_report(test_y, sys_y, output_dict=output_dict)
 
 
 # ----------- saving / loading --------------------

@@ -1,14 +1,19 @@
 from nltk import TweetTokenizer
 import spacy
+import numpy as np
 from sklearn.base import TransformerMixin
 
 from ml_pipeline.utils import hate_lexicon
 
+from multiprocessing import Pool
+
+tt_args = {}
 
 class Preprocessor(TransformerMixin):
     """preprocesses the data with NLTK and Spacy (lemmatizer)"""
     def __init__(self, tokenize, normalize_tweet, lowercase, lemmatize, lexicon={}):
-        tt_args = {}
+        global tt_args
+        # tt_args = {}
         tt_args['reduce_len'] = normalize_tweet
         tt_args['strip_handles'] = normalize_tweet
         tt_args['preserve_case'] = not lowercase
@@ -49,11 +54,26 @@ class Preprocessor(TransformerMixin):
         return apply_lexicon
 
 
-def tokenize_with(kwargs):
-    tokenizer = TweetTokenizer(**kwargs)
+def tokenize_tweet(tweet):
+    global tt_args
+    tokenizer = TweetTokenizer(tt_args)
+    return ' '.join(tokenizer.tokenize(tweet))
 
+
+def tokenize_with(kwargs):
+    # global tt_args
+    # tokenizer = TweetTokenizer(tt_args)
+    # tokenizerf = tokenize_tweeter(tokenizer)
     def tweet_tokenizer(data):
-        return [' '.join(tokenizer.tokenize(tweet)) for tweet in data]
+        with Pool(8) as p:
+            l = p.map(tokenize_tweet, data)
+        # l = []
+        # for tweet in data:
+        #     if tweet != tweet:
+        #         breakpoint()
+        #     l.append(' '.join(tokenizer.tokenize(tweet)))
+        return l
+        # return [' '.join(tokenizer.tokenize(tweet)) for tweet in data]
     return tweet_tokenizer
 
 
